@@ -1,0 +1,32 @@
+function sis_Pixel_Value_Mat = sis_nm_main(sis_input,sis_constant)
+
+% initializing the constant values from the constant file for ease of
+% readability
+    sis_constant.er.PRNU=PRNU;
+    sis_constant.er.DTN=DTN;
+    sis_constant.er.PLS=PLS;
+    sis_constant.er.Area_SN=Area_1;
+    sis_constant.er.Area_MN=Area_2;
+    sis_constant.CMOS.t_exposure= t_exposure;
+    sis_constant.CMOS.t_readout= t_readout;
+    sis_constant.ig.Gain=Gain;
+    
+    sis_input.sis_PE_val= PE_val;
+    
+    %step 1: adding all the means of the noises
+    PE_val= PE_val+ (PRNU + DTN +{DS* t_exposure} )*ones(size(PE_val);
+    %PSNL is simply subtracted here, not added
+    PE_val = PE_val-randn(PSNL*t_readout);
+    % Add the PLS
+    PE_val =PE_val*(1+ 1/PLS*(Area_1/Area_2));
+    %step 2: Applying a poisson distribution on the whole f the noises
+    PE_val=poissrnd(PE_val);
+    % step 3: Multiplying by the Gain to get the matrix of pixel values for each
+    %pixel
+    Pixel_Val_Mat=round(PE_val*Gain);
+    % As the Pixel Values can't be outside the range [0, 1023]
+    sis_Pixel_Val_Mat = max(sis_Pixel_Val_Mat, 0);
+    sis_Pixel_Val_Mat = min(sis_Pixel_Val_Mat, 1023);
+    
+    
+end
