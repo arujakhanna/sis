@@ -15,13 +15,13 @@ function sis_Pixel_Value_Mat = sis_nm_main(sis_input,sis_constant)
     
     %step 1: adding all the means of the noises
     PE_val= PE_val+ (PRNU + DTN +{DS* t_exposure} )*ones(size(PE_val);
-    %PSNL is simply subtracted here, not added
-    PE_val = PE_val-randn(PSNL*t_readout);
+    %PSNL can be added or subtracted too
+    PE_val = PE_val-(rand(size(PE_val))*PSNL*t_readout);
     % Add the PLS
     PE_val =PE_val*(1+ 1/PLS*(Area_1/Area_2));
-    %step 2: Applying a poisson distribution on the whole f the noises
-    PE_val=poissrnd(PE_val);
-    % step 3: Multiplying by the Gain to get the matrix of pixel values for each
+    %Applying a poisson distribution on the whole f the noises
+    PE_val= poissrnd(PE_val,size(PE_val));
+    %Multiplying by the Gain to get the matrix of pixel values for each
     %pixel
     Pixel_Val_Mat=round(PE_val*Gain);
     % As the Pixel Values can't be outside the range [0, 1023]
